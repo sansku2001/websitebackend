@@ -45,8 +45,10 @@ SESSION_SECONDS = 8 * 60 * 60
 sessions: dict[str, datetime] = {}
 
 app = FastAPI(title="Ramakant CHSL API", version="2.0.0")
-origins = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if origin.strip()]
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["GET", "POST", "PUT", "PATCH"], allow_headers=["Content-Type"])
+origins = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "https://websitefrontend-q05s.onrender.com,http://localhost:5173,http://127.0.0.1:5173").split(",") if origin.strip()]
+if "https://websitefrontend-q05s.onrender.com" not in origins:
+    origins.append("https://websitefrontend-q05s.onrender.com")
+app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 
 def connect_db() -> sqlite3.Connection:
