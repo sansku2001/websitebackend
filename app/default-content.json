@@ -1,0 +1,54 @@
+{
+  "site": {
+    "name": "Ramakant CHSL",
+    "tagline": "A community, together",
+    "welcomeTitle": "A place to belong. A home to grow.",
+    "welcomeText": "Ramakant CHSL is more than an address. It is a community shaped by shared celebrations, familiar faces and the everyday kindness of neighbours.",
+    "history": "Ramakant Co-operative Housing Society has been a place to call home for generations. Over the years, our building has seen new families arrive, children grow up and neighbours become lifelong friends.",
+    "historyExtra": "Replace this sample history with your society’s founding year, milestones and memories.",
+    "founded": "1986",
+    "homes": "48",
+    "address": "Sample Road, Andheri East, Mumbai, Maharashtra 4000XX",
+    "officeHours": "Monday–Saturday · 10:00 am–6:00 pm",
+    "phone": "+91 22 0000 0000",
+    "email": "office@ramakant.example",
+    "mapUrl": "https://www.google.com/maps/search/?api=1&query=Ramakant+CHSL+Mumbai",
+    "heroImage": "",
+    "historyImage": "",
+    "managingImage": "",
+    "redevelopmentImage": "",
+    "managingDescription": "The Managing Committee supports residents and oversees the day-to-day upkeep of the building. Replace this sample paragraph with the committee’s approved description.",
+    "redevelopmentDescription": "The Redevelopment Committee helps residents understand the process, review information and share questions with the wider society. Replace this sample paragraph with the committee’s approved description."
+  },
+  "notices": [
+    {"id":"notice-water","title":"Water tank cleaning","mrTitle":"पाण्याच्या टाकीची स्वच्छता","date":"06 OCT 2026","summary":"Cleaning is planned this week. Please store water in advance.","mrSummary":"या आठवड्यात स्वच्छता नियोजित आहे. कृपया पाणी साठवून ठेवा.","pdfUrl":""},
+    {"id":"notice-meeting","title":"Monthly committee meeting","mrTitle":"मासिक समिती बैठक","date":"28 SEP 2026","summary":"Residents may submit agenda items to the office before Friday.","mrSummary":"रहिवासी शुक्रवारपूर्वी कार्यालयात विषय पाठवू शकतात.","pdfUrl":""},
+    {"id":"notice-festival","title":"Festival celebrations","mrTitle":"सण उत्सव","date":"15 SEP 2026","summary":"Join neighbours for the upcoming community celebration.","mrSummary":"आगामी सामुदायिक उत्सवात शेजाऱ्यांसोबत सहभागी व्हा.","pdfUrl":""},
+    {"id":"notice-lift","title":"Lift maintenance schedule","mrTitle":"लिफ्ट देखभाल वेळापत्रक","date":"03 SEP 2026","summary":"Routine lift maintenance is scheduled. Please allow extra time during the service window.","mrSummary":"लिफ्टची नियमित देखभाल नियोजित आहे. कामाच्या वेळेत अतिरिक्त वेळ द्यावा.","pdfUrl":""},
+    {"id":"notice-parking","title":"Parking area reminder","mrTitle":"वाहनतळ सूचना","date":"22 AUG 2026","summary":"Please keep the marked access lanes clear for residents and emergency services.","mrSummary":"रहिवासी आणि आपत्कालीन सेवांसाठी मार्ग मोकळे ठेवा.","pdfUrl":""},
+    {"id":"notice-water-update","title":"Water supply update","mrTitle":"पाणीपुरवठा अद्यतन","date":"12 AUG 2026","summary":"A municipal supply interruption may affect the building. Please use stored water carefully.","mrSummary":"महापालिकेच्या पाणीपुरवठ्यातील व्यत्ययाचा परिणाम होऊ शकतो. पाण्याचा जपून वापर करा.","pdfUrl":""}
+  ],
+  "committees": {
+    "managing": {
+      "members": [
+        {"id":"managing-1","name":"Sample Member 1","role":"Chairperson","bio":"Replace with an approved member profile.","photo":""},
+        {"id":"managing-2","name":"Sample Member 2","role":"Secretary","bio":"Replace with an approved member profile.","photo":""}
+      ]
+    },
+    "redevelopment": {
+      "documents": [
+        {"id":"doc-tender","title":"Tender document copy","mrTitle":"निविदा दस्तऐवज प्रत","summary":"Sample tender document entry. Replace with the approved tender notice and bid documents.","mrSummary":"नमुना निविदा दस्तऐवज. मंजूर निविदा सूचना आणि बोलीची कागदपत्रे येथे जोडा.","url":""},
+        {"id":"doc-booklet","title":"Project information booklet","mrTitle":"प्रकल्प माहिती पुस्तिका","summary":"Sample project overview for society members.","mrSummary":"सोसायटी सदस्यांसाठी नमुना प्रकल्प माहिती.","url":""}
+      ],
+      "members": [
+        {"id":"redevelopment-1","name":"Sample Member 1","role":"Resident representative","bio":"Replace with an approved member profile.","photo":""},
+        {"id":"redevelopment-2","name":"Sample Member 2","role":"Meeting coordinator","bio":"Replace with an approved member profile.","photo":""}
+      ]
+    }
+  },
+  "events": [
+    {"id":"ganesh-2025","title":"Ganesh Chaturthi","mrTitle":"गणेश चतुर्थी","year":"2025","description":"Sample photos from the society celebration.","mrDescription":"सोसायटी उत्सवातील नमुना छायाचित्रे.","photos":[{"url":"https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=900&q=80","caption":"Ganpati welcome"},{"url":"https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=900&q=80","caption":"Neighbours celebrate together"},{"url":"https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=80","caption":"A festive evening"}]},
+    {"id":"diwali-2025","title":"Diwali","mrTitle":"दिवाळी","year":"2025","description":"Sample photos from the society celebration.","mrDescription":"सोसायटी उत्सवातील नमुना छायाचित्रे.","photos":[{"url":"https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=900&q=80","caption":"Diwali lights"},{"url":"https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80","caption":"A joyful evening"},{"url":"https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=900&q=80","caption":"Celebrating together"}]},
+    {"id":"gathering-2026","title":"Annual Gathering","mrTitle":"वार्षिक स्नेहसंमेलन","year":"2026","description":"Sample photos from the society gathering.","mrDescription":"सोसायटी स्नेहसंमेलनातील नमुना छायाचित्रे.","photos":[{"url":"https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=900&q=80","caption":"Our community together"},{"url":"https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=900&q=80","caption":"A warm welcome"},{"url":"https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=80","caption":"A day to remember"}]}
+  ]
+}

@@ -1,0 +1,14 @@
+# Keep passwords and private settings out of GitHub
+.env
+
+# Python virtual environment and temporary files
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local database and uploaded files
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
