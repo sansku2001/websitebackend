@@ -11,11 +11,14 @@ from urllib.parse import unquote
 from uuid import uuid4
 
 from dotenv import load_dotenv
-from fastapi import Cookie, Depends, FastAPI, File, HTTPException, Response, UploadFile
+from fastapi import Cookie, Depends, FastAPI, File, Header, HTTPException, Query, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationInfo
+from pydantic import field_validator
+
+from app import storage
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 load_dotenv(BASE_DIR / ".env")
@@ -63,6 +66,100 @@ def connect_db() -> sqlite3.Connection:
     return connection
 
 
+def add_translation_fields(content: dict[str, Any]) -> bool:
+    changed = False
+
+    def add_fields(items: Any, field_pairs: tuple[tuple[str, str], ...]) -> None:
+        nonlocal changed
+        if not isinstance(items, list):
+            return
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            for _, marathi_key in field_pairs:
+                if marathi_key not in item:
+                    item[marathi_key] = ""
+                    changed = True
+
+    site = content.get("site", {})
+    if isinstance(site, dict):
+        for marathi_key in (
+            "mrName", "mrTagline", "mrWelcomeTitle", "mrWelcomeText", "mrHistory",
+            "mrHistoryExtra", "mrAddress", "mrOfficeHours", "mrManagingDescription",
+            "mrRedevelopmentDescription",
+        ):
+            if marathi_key not in site:
+                site[marathi_key] = ""
+                changed = True
+
+    add_fields(content.get("notices"), (("title", "mrTitle"), ("summary", "mrSummary")))
+    add_fields(content.get("events"), (("title", "mrTitle"), ("description", "mrDescription")))
+    for event in content.get("events", []):
+        if not isinstance(event, dict):
+            continue
+        for photo in event.get("photos", []):
+            if isinstance(photo, dict) and "mrCaption" not in photo:
+                photo["mrCaption"] = ""
+                changed = True
+    committees = content.get("committees", {})
+    if isinstance(committees, dict):
+        for committee in committees.values():
+            if not isinstance(committee, dict):
+                continue
+            add_fields(committee.get("members"), (("name", "mrName"), ("role", "mrRole"), ("bio", "mrBio")))
+            add_fields(committee.get("documents"), (("title", "mrTitle"), ("summary", "mrSummary")))
+    return changed
+
+
+def backfill_sample_translations(content: Any, sample: Any) -> bool:
+    translation_sources = {
+        "mrName": "name",
+        "mrTagline": "tagline",
+        "mrWelcomeTitle": "welcomeTitle",
+        "mrWelcomeText": "welcomeText",
+        "mrHistory": "history",
+        "mrHistoryExtra": "historyExtra",
+        "mrAddress": "address",
+        "mrOfficeHours": "officeHours",
+        "mrManagingDescription": "managingDescription",
+        "mrRedevelopmentDescription": "redevelopmentDescription",
+        "mrTitle": "title",
+        "mrSummary": "summary",
+        "mrDescription": "description",
+        "mrRole": "role",
+        "mrBio": "bio",
+        "mrCaption": "caption",
+    }
+    changed = False
+
+    if isinstance(content, dict) and isinstance(sample, dict):
+        for marathi_key, english_key in translation_sources.items():
+            sample_translation = sample.get(marathi_key)
+            if (
+                sample_translation
+                and not content.get(marathi_key)
+                and content.get(english_key) == sample.get(english_key)
+            ):
+                content[marathi_key] = sample_translation
+                changed = True
+        for key, value in content.items():
+            if key in sample and backfill_sample_translations(value, sample[key]):
+                changed = True
+    elif isinstance(content, list) and isinstance(sample, list):
+        sample_by_id = {
+            item.get("id"): item
+            for item in sample
+            if isinstance(item, dict) and item.get("id") is not None
+        }
+        for index, item in enumerate(content):
+            sample_item = sample_by_id.get(item.get("id")) if isinstance(item, dict) else None
+            if sample_item is None and index < len(sample):
+                sample_item = sample[index]
+            if backfill_sample_translations(item, sample_item):
+                changed = True
+    return changed
+
+
 def initialize_database() -> None:
     with connect_db() as db:
         db.execute("PRAGMA journal_mode=WAL")
@@ -74,9 +171,18 @@ def initialize_database() -> None:
         if db.execute("SELECT id FROM content WHERE id=1").fetchone() is None:
             seed = json.loads((BASE_DIR / "app" / "default-content.json").read_text(encoding="utf-8"))
             db.execute("INSERT INTO content(id,json,updated_at) VALUES(1,?,?)", (json.dumps(seed, ensure_ascii=False), datetime.now(timezone.utc).isoformat()))
+        content_row = db.execute("SELECT json FROM content WHERE id=1").fetchone()
+        content = json.loads(content_row["json"])
+        sample = json.loads((BASE_DIR / "app" / "default-content.json").read_text(encoding="utf-8"))
+        if add_translation_fields(content) | backfill_sample_translations(content, sample):
+            db.execute(
+                "UPDATE content SET json=?, updated_at=? WHERE id=1",
+                (json.dumps(content, ensure_ascii=False), datetime.now(timezone.utc).isoformat()),
+            )
 
 
 initialize_database()
+storage.initialize_tracker(DB_PATH, UPLOAD_DIR)
 
 
 class LoginBody(BaseModel):
@@ -96,6 +202,43 @@ class StatusBody(BaseModel):
 class ComplaintImport(BaseModel):
     complaints: list[dict[str, Any]] = Field(max_length=500)
 
+
+TRACKER_STAGES = ("Resolution", "Developer", "Agreement", "Approvals", "Construction", "Possession")
+
+
+class UpdateBody(BaseModel):
+    title: str = Field(min_length=1, max_length=120)
+    description: str = Field(min_length=1, max_length=1000)
+    title_mr: str = Field(default="", max_length=120)
+    description_mr: str = Field(default="", max_length=1000)
+    stage: str
+    file_url: str | None = Field(default=None, max_length=2048)
+
+    @field_validator("title", "description", "title_mr", "description_mr")
+    @classmethod
+    def trim_text(cls, value: str, info: ValidationInfo) -> str:
+        value = value.strip()
+        if not value and info.field_name in {"title", "description"}:
+            raise ValueError("This field cannot be blank.")
+        return value
+
+    @field_validator("stage")
+    @classmethod
+    def validate_stage(cls, value: str) -> str:
+        if value not in TRACKER_STAGES:
+            raise ValueError("Choose a valid redevelopment stage.")
+        return value
+
+
+class SummaryBody(BaseModel):
+    current_stage: str
+
+    @field_validator("current_stage")
+    @classmethod
+    def validate_stage(cls, value: str) -> str:
+        if value not in TRACKER_STAGES:
+            raise ValueError("Choose a valid redevelopment stage.")
+        return value
 
 def read_content() -> dict[str, Any]:
     with connect_db() as db:
@@ -119,6 +262,22 @@ def require_admin(token: str | None = Depends(current_session)) -> str:
     if not token:
         raise HTTPException(status_code=401, detail="Please sign in again.")
     return token
+
+
+def require_tracker_admin(
+    x_admin_key: str | None = Header(default=None, alias="X-Admin-Key"),
+    session: str | None = Depends(current_session),
+) -> None:
+    if session:
+        return
+
+    admin_key = os.getenv("ADMIN_KEY")
+    if not admin_key and APP_ENV != "production":
+        admin_key = ADMIN_PASSWORD
+    if not admin_key:
+        raise HTTPException(status_code=503, detail="Tracker admin access is not configured.")
+    if not x_admin_key or not hmac.compare_digest(x_admin_key, admin_key):
+        raise HTTPException(status_code=401, detail="Invalid admin key.")
 
 
 def clean(value: Any, maximum: int) -> str:
@@ -190,6 +349,7 @@ def logout(response: Response, token: str | None = Depends(current_session)) -> 
 def put_content(data: dict[str, Any], _: str = Depends(require_admin)) -> dict[str, Any]:
     if not valid_content(data):
         raise HTTPException(status_code=400, detail="Content is incomplete or an event has more than 10 photos.")
+    add_translation_fields(data)
     updated = datetime.now(timezone.utc).isoformat()
     with connect_db() as db:
         db.execute("UPDATE content SET json=?, updated_at=? WHERE id=1", (json.dumps(data, ensure_ascii=False), updated))
@@ -241,6 +401,63 @@ def import_complaints(body: ComplaintImport, _: str = Depends(require_admin)) ->
             result = db.execute("INSERT OR IGNORE INTO complaints(id,room,concern,status,created_at) VALUES(?,?,?,?,?)", (complaint_id, room, concern, status, created))
             imported += result.rowcount
     return {"ok": True, "imported": imported}
+
+
+def tracker_call(function, *args):
+    try:
+        return function(*args)
+    except storage.UpdateLimitReached as error:
+        raise HTTPException(status_code=400, detail="Limit of 15 updates reached. Delete an old update to add a new one.") from error
+
+
+@app.get("/updates")
+def get_updates(limit: int = Query(default=15, ge=1, le=15)) -> dict[str, Any]:
+    result = tracker_call(storage.get_tracker, limit)
+    return {**result["summary"], "total_count": result["total_count"], "updates": result["updates"]}
+
+
+@app.post("/updates/admin/verify")
+def verify_tracker_admin(_: None = Depends(require_tracker_admin)) -> dict[str, bool]:
+    return {"ok": True}
+
+
+@app.post("/updates", status_code=201)
+def create_update(body: UpdateBody, _: None = Depends(require_tracker_admin)) -> dict[str, Any]:
+    return tracker_call(storage.create_update, body.model_dump())
+
+
+@app.put("/updates/{update_id}")
+def edit_update(update_id: str, body: UpdateBody, _: None = Depends(require_tracker_admin)) -> dict[str, Any]:
+    update = tracker_call(storage.edit_update, update_id, body.model_dump())
+    if update is None:
+        raise HTTPException(status_code=404, detail="Update not found.")
+    return update
+
+
+@app.delete("/updates/{update_id}")
+def delete_update(update_id: str, _: None = Depends(require_tracker_admin)) -> dict[str, bool]:
+    if not tracker_call(storage.delete_update, update_id):
+        raise HTTPException(status_code=404, detail="Update not found.")
+    return {"ok": True}
+
+
+@app.put("/summary")
+def put_tracker_summary(body: SummaryBody, _: None = Depends(require_tracker_admin)) -> dict[str, Any]:
+    return tracker_call(storage.save_summary, body.model_dump())
+
+
+@app.post("/updates/upload")
+async def upload_tracker_file(
+    file: UploadFile = File(...),
+    _: None = Depends(require_tracker_admin),
+) -> dict[str, str]:
+    content_types = {"application/pdf", "image/jpeg", "image/png", "image/webp"}
+    if file.content_type not in content_types:
+        raise HTTPException(status_code=415, detail="Upload a PDF, JPG, PNG, or WEBP file.")
+    data = await file.read(10 * 1024 * 1024 + 1)
+    if not data or len(data) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="The attachment must be smaller than 10 MB.")
+    return tracker_call(storage.upload_file, data, file.content_type)
 
 
 @app.patch("/api/complaints/{complaint_id}")

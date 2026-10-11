@@ -1,15 +1,23 @@
 {
   "site": {
     "name": "Ramakant CHSL",
+    "mrName": "रामकांत CHSL",
     "tagline": "A community, together",
+    "mrTagline": "एकत्रित समुदाय",
     "welcomeTitle": "A place to belong. A home to grow.",
+    "mrWelcomeTitle": "आपलेपणाचे घर, प्रगतीची वाट",
     "welcomeText": "Ramakant CHSL is more than an address. It is a community shaped by shared celebrations, familiar faces and the everyday kindness of neighbours.",
+    "mrWelcomeText": "रामकांत CHSL हा केवळ पत्ता नाही. एकत्र साजरे केलेले सण, परिचित चेहरे आणि शेजाऱ्यांच्या रोजच्या आपुलकीतून घडलेला हा समुदाय आहे.",
     "history": "Ramakant Co-operative Housing Society has been a place to call home for generations. Over the years, our building has seen new families arrive, children grow up and neighbours become lifelong friends.",
+    "mrHistory": "रामकांत सहकारी गृहनिर्माण संस्था अनेक पिढ्यांचे घर राहिली आहे. वर्षानुवर्षे येथे नवीन कुटुंबे आली, मुले मोठी झाली आणि शेजारी जिवाभावाचे मित्र बनले.",
     "historyExtra": "Replace this sample history with your society’s founding year, milestones and memories.",
+    "mrHistoryExtra": "सोसायटीची स्थापना, महत्त्वाचे टप्पे आणि आठवणी यांची माहिती येथे लिहा.",
     "founded": "1986",
     "homes": "48",
     "address": "Sample Road, Andheri East, Mumbai, Maharashtra 4000XX",
+    "mrAddress": "नमुना मार्ग, अंधेरी पूर्व, मुंबई, महाराष्ट्र ४०००XX",
     "officeHours": "Monday–Saturday · 10:00 am–6:00 pm",
+    "mrOfficeHours": "सोमवार–शनिवार · सकाळी १०:०० ते संध्याकाळी ६:००",
     "phone": "+91 22 0000 0000",
     "email": "office@ramakant.example",
     "mapUrl": "https://www.google.com/maps/search/?api=1&query=Ramakant+CHSL+Mumbai",
@@ -18,7 +26,9 @@
     "managingImage": "",
     "redevelopmentImage": "",
     "managingDescription": "The Managing Committee supports residents and oversees the day-to-day upkeep of the building. Replace this sample paragraph with the committee’s approved description.",
-    "redevelopmentDescription": "The Redevelopment Committee helps residents understand the process, review information and share questions with the wider society. Replace this sample paragraph with the committee’s approved description."
+    "redevelopmentDescription": "The Redevelopment Committee helps residents understand the process, review information and share questions with the wider society. Replace this sample paragraph with the committee’s approved description.",
+    "mrManagingDescription": "व्यवस्थापन समिती रहिवाशांना मदत करते आणि इमारतीच्या दैनंदिन देखभालीची जबाबदारी सांभाळते. समितीचा मंजूर परिचय येथे लिहा.",
+    "mrRedevelopmentDescription": "पुनर्विकास समिती रहिवाशांना प्रक्रिया समजून घेण्यास, माहिती तपासण्यास आणि प्रश्न मांडण्यास मदत करते. समितीचा मंजूर परिचय येथे लिहा."
   },
   "notices": [
     {"id":"notice-water","title":"Water tank cleaning","mrTitle":"पाण्याच्या टाकीची स्वच्छता","date":"06 OCT 2026","summary":"Cleaning is planned this week. Please store water in advance.","mrSummary":"या आठवड्यात स्वच्छता नियोजित आहे. कृपया पाणी साठवून ठेवा.","pdfUrl":""},
@@ -31,8 +41,8 @@
   "committees": {
     "managing": {
       "members": [
-        {"id":"managing-1","name":"Sample Member 1","role":"Chairperson","bio":"Replace with an approved member profile.","photo":""},
-        {"id":"managing-2","name":"Sample Member 2","role":"Secretary","bio":"Replace with an approved member profile.","photo":""}
+        {"id":"managing-1","name":"Sample Member 1","mrName":"नमुना सदस्य १","role":"Chairperson","mrRole":"अध्यक्ष","bio":"Replace with an approved member profile.","mrBio":"मंजूर सदस्य परिचय येथे लिहा.","photo":""},
+        {"id":"managing-2","name":"Sample Member 2","mrName":"नमुना सदस्य २","role":"Secretary","mrRole":"सचिव","bio":"Replace with an approved member profile.","mrBio":"मंजूर सदस्य परिचय येथे लिहा.","photo":""}
       ]
     },
     "redevelopment": {
@@ -41,8 +51,8 @@
         {"id":"doc-booklet","title":"Project information booklet","mrTitle":"प्रकल्प माहिती पुस्तिका","summary":"Sample project overview for society members.","mrSummary":"सोसायटी सदस्यांसाठी नमुना प्रकल्प माहिती.","url":""}
       ],
       "members": [
-        {"id":"redevelopment-1","name":"Sample Member 1","role":"Resident representative","bio":"Replace with an approved member profile.","photo":""},
-        {"id":"redevelopment-2","name":"Sample Member 2","role":"Meeting coordinator","bio":"Replace with an approved member profile.","photo":""}
+        {"id":"redevelopment-1","name":"Sample Member 1","mrName":"नमुना सदस्य १","role":"Resident representative","mrRole":"रहिवासी प्रतिनिधी","bio":"Replace with an approved member profile.","mrBio":"मंजूर सदस्य परिचय येथे लिहा.","photo":""},
+        {"id":"redevelopment-2","name":"Sample Member 2","mrName":"नमुना सदस्य २","role":"Meeting coordinator","mrRole":"बैठक समन्वयक","bio":"Replace with an approved member profile.","mrBio":"मंजूर सदस्य परिचय येथे लिहा.","photo":""}
       ]
     }
   },
